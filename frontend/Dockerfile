@@ -3,7 +3,7 @@ FROM node:14 AS build
 WORKDIR /app
 
 # Copier les fichiers nécessaires pour installer les dépendances
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm install
 
 # Copier tout le code source et construire le projet
