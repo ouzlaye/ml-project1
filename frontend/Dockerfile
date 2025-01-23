@@ -1,12 +1,21 @@
-FROM node:14
-
+# Étape 1 : Construire l'application React
+FROM node:14 AS build
 WORKDIR /app
 
-COPY package.json ./
+# Copier les fichiers nécessaires pour installer les dépendances
+COPY package.json package-lock.json ./
 RUN npm install
 
+# Copier tout le code source et construire le projet
 COPY . .
+RUN npm run build
 
-EXPOSE 3000
+# Étape 2 : Servir les fichiers statiques avec Nginx
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
 
-CMD ["npm", "start"]
+# Exposer le port 80 (par défaut pour Nginx)
+EXPOSE 80
+
+# Lancer Nginx en mode foreground
+CMD ["nginx", "-g", "daemon off;"]
